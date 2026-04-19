@@ -1,0 +1,8 @@
+.env
+.env.*
+.git/
+.vercel/
+node_modules/
+server.js
+*.zip
+farmer_data/

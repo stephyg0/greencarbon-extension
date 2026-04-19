@@ -1,5 +1,7 @@
 # GreenCarbon Field Mapper
 
+Live app: https://greencarbon-extension.vercel.app/
+
 Working UI prototype for a farmer logbook and field polygon mapping workflow. The app serves static HTML screens with shared JavaScript behavior, persists farmer/profile and polygon data through Supabase, and keeps a local-storage fallback for offline or not-yet-configured states.
 
 ## Quick Test
@@ -93,6 +95,50 @@ Useful routes:
 - `/api/supabase/status`
 - `/api/farmer-profiles`
 - `/api/field-polygons`
+
+## Deploy To Vercel
+
+This project is configured for Vercel with:
+
+- `vercel.json` rewrites for the app routes.
+- Vercel Functions in `api/` for the Supabase API routes.
+- Static HTML screens served directly from `stitch_agri_logbook_field_mapper/`.
+
+Before deploying, add the Supabase environment variables in Vercel:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_or_anon_key
+```
+
+Dashboard deploy:
+
+1. Push the repository to GitHub.
+2. In Vercel, create a New Project and import the repository.
+3. Use the `Other` framework preset if Vercel asks.
+4. Keep the install command as `npm install`.
+5. Use `npm run build` as the build command.
+6. Add the Supabase environment variables.
+7. Deploy.
+
+CLI deploy:
+
+```bash
+npm install
+npm run build
+vercel
+vercel --prod
+```
+
+After deployment, check:
+
+```text
+/summary
+/logbook
+/map
+/conflict
+/api/supabase/status
+```
 
 ## Environment Variables
 

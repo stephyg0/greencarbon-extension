@@ -1,0 +1,84 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "farmer-app-data.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "ui-actions.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "stitch_agri_logbook_field_mapper/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "stitch_agri_logbook_field_mapper/**/*.png",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/supabase/status",
+      "dest": "/api/supabase/status.js"
+    },
+    {
+      "src": "/api/farmer-profiles",
+      "dest": "/api/farmer-profiles/index.js"
+    },
+    {
+      "src": "/api/farmer-profiles/sync",
+      "dest": "/api/farmer-profiles/sync.js"
+    },
+    {
+      "src": "/api/field-polygons",
+      "dest": "/api/field-polygons/index.js"
+    },
+    {
+      "src": "/",
+      "dest": "/stitch_agri_logbook_field_mapper/dashboard_summary/code.html"
+    },
+    {
+      "src": "/summary",
+      "dest": "/stitch_agri_logbook_field_mapper/dashboard_summary/code.html"
+    },
+    {
+      "src": "/summary.html",
+      "dest": "/stitch_agri_logbook_field_mapper/dashboard_summary/code.html"
+    },
+    {
+      "src": "/logbook",
+      "dest": "/stitch_agri_logbook_field_mapper/logbook_spreadsheet_view/code.html"
+    },
+    {
+      "src": "/logbook.html",
+      "dest": "/stitch_agri_logbook_field_mapper/logbook_spreadsheet_view/code.html"
+    },
+    {
+      "src": "/map",
+      "dest": "/stitch_agri_logbook_field_mapper/map_drawing_tools/code.html"
+    },
+    {
+      "src": "/map.html",
+      "dest": "/stitch_agri_logbook_field_mapper/map_drawing_tools/code.html"
+    },
+    {
+      "src": "/conflict",
+      "dest": "/stitch_agri_logbook_field_mapper/map_conflict_state/code.html"
+    },
+    {
+      "src": "/conflict.html",
+      "dest": "/stitch_agri_logbook_field_mapper/map_conflict_state/code.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

@@ -21,11 +21,23 @@ loadEnvFile(path.join(__dirname, ".env.local"));
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-const supabaseReady = Boolean(supabaseUrl && supabaseKey);
-const supabase = supabaseReady ? createClient(supabaseUrl, supabaseKey) : null;
+let supabase = null;
+let supabaseConfigError = null;
+
+if (!supabaseUrl || !supabaseKey) {
+  supabaseConfigError = "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY";
+} else {
+  try {
+    supabase = createClient(supabaseUrl, supabaseKey);
+  } catch (error) {
+    supabaseConfigError = error.message || "Invalid Supabase configuration";
+  }
+}
+
+const supabaseReady = Boolean(supabase);
 
 module.exports = {
   supabase,
   supabaseReady,
-  supabaseConfigError: supabaseReady ? null : "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+  supabaseConfigError,
 };

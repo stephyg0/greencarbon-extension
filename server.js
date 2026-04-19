@@ -88,6 +88,10 @@ function getLogbookData(value) {
 }
 
 async function handleApi(req, res, urlPath) {
+  if (!urlPath.startsWith("/api/")) {
+    return false;
+  }
+
   if (!supabaseReady) {
     sendJson(res, 500, {
       ok: false,
@@ -216,12 +220,8 @@ async function handleApi(req, res, urlPath) {
     return true;
   }
 
-  if (urlPath.startsWith("/api/")) {
-    sendJson(res, 404, { ok: false, error: "Unknown API route" });
-    return true;
-  }
-
-  return false;
+  sendJson(res, 404, { ok: false, error: "Unknown API route" });
+  return true;
 }
 
 const server = http.createServer(async (req, res) => {
