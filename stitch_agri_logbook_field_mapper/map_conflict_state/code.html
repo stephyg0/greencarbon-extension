@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#151c27",
+                        "primary": "#006c49",
+                        "surface-container-highest": "#dce2f3",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#79000e",
+                        "error": "#ba1a1a",
+                        "tertiary": "#b91a24",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "inverse-surface": "#2a313d",
+                        "secondary": "#855300",
+                        "tertiary-container": "#ff7a73",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#2a1700",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-primary-fixed": "#002113",
+                        "primary-fixed": "#6ffbbe",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#00422b",
+                        "background": "#f9f9ff",
+                        "outline": "#6c7a71",
+                        "secondary-container": "#fea619",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#4edea3",
+                        "on-tertiary-fixed": "#410004",
+                        "surface-tint": "#006c49",
+                        "on-surface-variant": "#3c4a42",
+                        "secondary-fixed": "#ffddb8",
+                        "primary-fixed-dim": "#4edea3",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#10b981",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "surface-variant": "#dce2f3",
+                        "on-secondary-container": "#684000",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-high": "#e2e8f8",
+                        "on-background": "#151c27",
+                        "outline-variant": "#bbcabf",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .map-mesh {
+            background-image: radial-gradient(circle at 2px 2px, rgba(0, 108, 73, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        #conflict-leaflet-map {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .leaflet-container {
+            font-family: 'Inter', sans-serif;
+            background: #dce2f3;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<header class="bg-[#f9f9ff]/80 dark:bg-[#151c27]/80 backdrop-blur-md sticky top-0 z-50 shadow-[0px_12px_32px_-4px_rgba(21,28,39,0.06)]">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-[1920px] mx-auto">
+<div class="flex items-center gap-12">
+<span class="text-xl font-black tracking-tighter text-[#006c49] dark:text-[#10b981]">AeroField</span>
+<nav class="hidden md:flex items-center gap-8 font-['Inter'] font-medium tracking-tight text-sm">
+<a class="text-[#151c27]/60 dark:text-[#f9f9ff]/60 hover:text-[#006c49] transition-colors" href="/summary">Summary</a>
+<a class="text-[#151c27]/60 dark:text-[#f9f9ff]/60 hover:text-[#006c49] transition-colors" href="/logbook">Logbook</a>
+<a class="text-[#006c49] dark:text-[#10b981] font-bold border-b-2 border-[#006c49] pb-1" href="/map">Map</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<button class="p-2 text-[#151c27]/60 hover:bg-[#f0f3ff] rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-[#151c27]/60 hover:bg-[#f0f3ff] rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2 rounded-xl text-sm font-semibold active:scale-95 transition-all shadow-sm" data-route="/logbook#add-row">
+                    Add Field
+                </button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container-high cursor-pointer" data-profile-create="" role="button" tabindex="0">
+<img alt="Manager Profile" data-alt="professional male farm manager portrait in corporate attire with a soft office background and natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa_ICc0EzOPfAnPRE_Qyj-Oyd_VD3YPIymPKgLAP4RThtJsAqR_OFhVdUf1pzYG7U2y4u-FeR6yMVsTDzZUrXko8SOCbjk0bEykooiSBjV-uUSltxvR6F7w5MleXfdTZzk4AdhxyS7VQXijgvD-CI_7-gi3TRQ1AuDPRX-zlgPFcUJXaA98BWF_TL635H5r3mJTInabseR7LmaUt5wUwpk5U9Q69QT7fMxN5FwJ3NbzK4bm5VPqiM5_6K66tOrq8HgDboHhMM9vIk"/>
+</div>
+</div>
+</div>
+<div class="bg-[#f0f3ff] dark:bg-[#1f2937] h-[1px] w-full"></div>
+</header>
+<div class="flex h-[calc(100vh-73px)] relative overflow-hidden bg-surface">
+<aside class="bg-[#f0f3ff] dark:bg-[#1a202c] h-screen w-20 flex flex-col items-center py-8 fixed left-0 top-16 z-40">
+<div class="flex flex-col gap-6 items-center">
+<button class="bg-white dark:bg-[#2d3748] text-[#006c49] rounded-xl p-3 shadow-sm scale-105 transition-all duration-200">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="text-[#151c27]/40 dark:text-[#f9f9ff]/40 p-3 hover:bg-white/50 rounded-xl transition-all">
+<span class="material-symbols-outlined">draw</span>
+</button>
+<button class="text-[#151c27]/40 dark:text-[#f9f9ff]/40 p-3 hover:bg-white/50 rounded-xl transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+<button class="text-[#151c27]/40 dark:text-[#f9f9ff]/40 p-3 hover:bg-white/50 rounded-xl transition-all">
+<span class="material-symbols-outlined">layers</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 ml-20 relative">
+<div class="absolute inset-0 z-0 map-mesh">
+<div id="conflict-leaflet-map"></div>
+<div class="absolute inset-0 bg-error/10 pointer-events-none"></div>
+</div>
+<div class="absolute inset-y-0 right-0 w-[420px] z-50 p-6 flex items-start">
+<div class="w-full bg-surface-container-lowest/80 backdrop-blur-2xl rounded-[24px] shadow-[0px_12px_32px_-4px_rgba(21,28,39,0.12)] flex flex-col overflow-hidden border border-white/40">
+<div class="p-8 border-b border-outline-variant/10">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<h2 class="text-2xl font-black tracking-tighter text-error uppercase" id="conflict-title">Issue Detected</h2>
+</div>
+<p class="text-on-surface font-medium text-lg leading-snug mb-4" id="conflict-headline">
+                            Your field overlaps another OR area mismatch detected.
+                        </p>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-8" id="conflict-copy">
+                            The polygon defined for "North Quadrant B" intersects with an existing parcel boundary (ID: #8921-X). Review the highlighted red zone to resolve the geometry conflict.
+                        </p>
+<div class="space-y-4">
+<div class="bg-surface-container-low p-5 rounded-2xl">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase">Current Area</span>
+<span class="text-sm font-bold text-error" id="conflict-current-area">142.4 Acres</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-error w-3/4 rounded-full"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 rounded-2xl">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase">Overlap Severity</span>
+<span class="text-sm font-bold text-error" id="conflict-severity">High (22%)</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-error w-1/4 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-8 space-y-3">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-4 rounded-xl font-bold text-sm tracking-tight active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2" data-route="/map">
+<span class="material-symbols-outlined text-sm">edit</span>
+                            Edit Field
+                        </button>
+<button class="w-full bg-transparent border border-outline-variant/30 text-on-surface py-4 rounded-xl font-bold text-sm tracking-tight hover:bg-surface-container-low transition-all active:scale-[0.98]" data-route="/summary">
+                            Ignore for now
+                        </button>
+</div>
+</div>
+</div>
+<div class="absolute bottom-8 left-8 z-40 flex items-end gap-6">
+<div class="bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-lg border border-white/50 flex flex-col gap-1">
+<button class="p-2 hover:bg-surface-container-low rounded-lg text-on-surface-variant"><span class="material-symbols-outlined">add</span></button>
+<div class="h-[1px] w-full bg-outline-variant/20 mx-auto"></div>
+<button class="p-2 hover:bg-surface-container-low rounded-lg text-on-surface-variant"><span class="material-symbols-outlined">remove</span></button>
+</div>
+<div class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl shadow-lg border border-white/50">
+<div class="flex -space-x-2">
+<img alt="Team member" class="w-8 h-8 rounded-full border-2 border-white" data-alt="close-up portrait of a male technician with a friendly expression and professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApVMvbZHj6lXky-xN9_WXXzutHJqV5p4PpO-YLvdZeiQ4KKl-umnssz6IyPguzBePVXHi-sRpGCf38bJwIkeSu55R_EErFzARGMLW9Y6_c16xE94gX3SeB6LD9e3CftVXwe8lIhs4ohMliUOL2I4gm2IJ0UercHi7vSIQ_s_YfQ9FpK8aE6rIhd1yxirB3hkaeM4FSBlaZ5HE2Bc58c7kZZ6vtuyGa14bbSCeIiZL9q3mooW5-ISfhC3EioesMcb1DGFTFDNPA2dw"/>
+<img alt="Team member" class="w-8 h-8 rounded-full border-2 border-white" data-alt="close-up portrait of a female agronomist looking thoughtful in soft natural daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaSIUbYGhJsPNpbSSh2V6iVZkx-g61wbDhPmaD42IZoLYHDfGDH6ysFaczsAIFpH72rpzQP00qg5H9BfQi6pWtl2QN0Anlpz4qQQ2pCN4nWimu-qXYn5ysfpvBo3oi921pXPlNPnEAzl2UK1Ru5EYM_4VyExg8UKR_CrhRJu1rAjFG-umTNekVssZhqQt7aHOgWu_24MKyZizOr_iV83g4Sm3Fk_ZlZJA8e1rqjDirnKceo_If0CHebz14PM1yXmqfmfl4bqystvg"/>
+<div class="w-8 h-8 rounded-full bg-primary-container text-[10px] font-bold flex items-center justify-center text-on-primary-container border-2 border-white">+3</div>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant/30"></div>
+<span class="text-[11px] font-bold tracking-tight text-on-surface-variant uppercase">Shared View: 5 active</span>
+</div>
+</div>
+<div class="absolute top-8 left-8 z-40">
+<div class="flex items-center bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-1 border border-white/50">
+<div class="flex items-center px-4 py-2 gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-medium w-64 placeholder:text-outline-variant" placeholder="Search Parcel ID or Coordinates..." type="text"/>
+</div>
+<button class="bg-surface-container-low text-on-surface px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider">
+                        Quick Find
+                    </button>
+</div>
+</div>
+<div class="absolute right-8 bottom-8 z-40">
+<div class="p-6 bg-surface-container-lowest/90 backdrop-blur-md rounded-[24px] shadow-2xl border border-white/40 max-w-[280px]">
+<h4 class="text-[10px] font-black tracking-[0.2em] text-on-surface-variant uppercase mb-4">Legend</h4>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-xs font-semibold text-on-surface-variant">Validated Parcel</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-error border-2 border-error/20 ring-4 ring-error/10"></div>
+<span class="text-xs font-semibold text-error">Conflict Area</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="text-xs font-semibold text-on-surface-variant">Pending Review</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="/farmer-app-data.js"></script>
+<script crossorigin="" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/ui-actions.js"></script>
+</body></html>

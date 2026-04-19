@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#151c27",
+                        "primary": "#006c49",
+                        "surface-container-highest": "#dce2f3",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#79000e",
+                        "error": "#ba1a1a",
+                        "tertiary": "#b91a24",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "inverse-surface": "#2a313d",
+                        "secondary": "#855300",
+                        "tertiary-container": "#ff7a73",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#2a1700",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-primary-fixed": "#002113",
+                        "primary-fixed": "#6ffbbe",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#00422b",
+                        "background": "#f9f9ff",
+                        "outline": "#6c7a71",
+                        "secondary-container": "#fea619",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#4edea3",
+                        "on-tertiary-fixed": "#410004",
+                        "surface-tint": "#006c49",
+                        "on-surface-variant": "#3c4a42",
+                        "secondary-fixed": "#ffddb8",
+                        "primary-fixed-dim": "#4edea3",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#10b981",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "surface-variant": "#dce2f3",
+                        "on-secondary-container": "#684000",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-high": "#e2e8f8",
+                        "on-background": "#151c27",
+                        "outline-variant": "#bbcabf",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        #summary-leaflet-map {
+            height: 100%;
+            width: 100%;
+        }
+        .leaflet-container {
+            background: #dce2f3;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-[#f9f9ff]/80 dark:bg-[#151c27]/80 backdrop-blur-md sticky top-0 z-50 shadow-[0px_12px_32px_-4px_rgba(21,28,39,0.06)]">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-[1920px] mx-auto">
+<div class="flex items-center gap-12">
+<span class="text-xl font-black tracking-tighter text-[#006c49] dark:text-[#10b981]">AeroField</span>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-['Inter'] font-medium tracking-tight text-sm text-[#006c49] dark:text-[#10b981] font-bold border-b-2 border-[#006c49] pb-1" href="/summary">Summary</a>
+<a class="font-['Inter'] font-medium tracking-tight text-sm text-[#151c27]/60 dark:text-[#f9f9ff]/60 hover:text-[#006c49] transition-colors" href="/logbook">Logbook</a>
+<a class="font-['Inter'] font-medium tracking-tight text-sm text-[#151c27]/60 dark:text-[#f9f9ff]/60 hover:text-[#006c49] transition-colors" href="/map">Map</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex gap-2">
+<button class="p-2 text-[#151c27]/60 hover:bg-[#f0f3ff] rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-[#151c27]/60 hover:bg-[#f0f3ff] rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2 rounded-xl text-sm font-semibold active:scale-95 transition-all shadow-sm" data-route="/logbook#add-row">
+                    Add Field
+                </button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container-high cursor-pointer" data-profile-create="" role="button" tabindex="0">
+<img alt="Manager Profile" data-alt="professional portrait of a middle-aged male farm manager with a kind expression and warm outdoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNj_qnbxA7eV6TCFXuX-q5MwPD5_TjQveyFXNiXbsgt_I1jjO5LpEf7xtuV2mSjJ3aELoLW-YhQ_7xoeW3_n9xggbus7LiLMiHIASEY71VVV8Oo2aZ8Agttwmnc_s0qXHYgrMgIkHIozmA4wSLohxhTLZmZdH9GF-qEcD9OuaQpliqLMB5d8s7QPTdYp4YzopSWIYtNgPc99mghEAnr4zHaQYBc9-AYFuZRUGPEcWc6pRiFivFXQqcbDJkXSdNHY8btAlEC8V5nVc"/>
+</div>
+</div>
+</div>
+<div class="bg-[#f0f3ff] dark:bg-[#1f2937] h-[1px] w-full"></div>
+</header>
+<main class="max-w-7xl mx-auto px-8 py-12">
+<!-- Top Section: Greeting -->
+<section class="mb-12">
+<h1 class="text-5xl font-extrabold tracking-tight text-on-surface mb-2">Welcome back, John</h1>
+<p class="text-on-surface-variant font-medium opacity-70">Here's what's happening on your farm today.</p>
+</section>
+<!-- Middle Section: Status Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+<!-- Card 1: Verified -->
+<div class="group bg-surface-container-lowest p-8 rounded-3xl transition-all duration-300 hover:shadow-[0px_12px_32px_-4px_rgba(21,28,39,0.06)] flex flex-col justify-between min-h-[180px] border border-outline-variant/10">
+<div class="flex justify-between items-start">
+<div class="space-y-4">
+<span class="inline-flex items-center gap-2 px-3 py-1 bg-primary-fixed text-on-primary-fixed rounded-full text-xs font-bold uppercase tracking-wider">
+                            Verified Status
+                        </span>
+<h2 class="text-2xl font-bold text-on-surface" id="summary-card-1-title">Verified Fields</h2>
+<p class="text-on-surface-variant text-lg" id="summary-card-1-copy">1 field verified</p>
+</div>
+<div class="bg-primary/10 p-4 rounded-2xl">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Needs Review -->
+<div class="group bg-surface-container-lowest p-8 rounded-3xl transition-all duration-300 hover:shadow-[0px_12px_32px_-4px_rgba(21,28,39,0.06)] flex flex-col justify-between min-h-[180px] border border-outline-variant/10">
+<div class="flex justify-between items-start">
+<div class="space-y-4">
+<span class="inline-flex items-center gap-2 px-3 py-1 bg-secondary-fixed text-on-secondary-fixed rounded-full text-xs font-bold uppercase tracking-wider">
+                            Requires Action
+                        </span>
+<h2 class="text-2xl font-bold text-on-surface" id="summary-card-2-title">Needs Review</h2>
+<p class="text-on-surface-variant text-lg" id="summary-card-2-copy">1 issue detected</p>
+</div>
+<div class="bg-secondary/10 p-4 rounded-2xl">
+<span class="material-symbols-outlined text-secondary text-4xl" data-icon="warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Map Preview -->
+<section class="relative">
+<div class="bg-surface-container-low rounded-[2.5rem] p-4 overflow-hidden shadow-[0px_24px_48px_-12px_rgba(21,28,39,0.04)] border border-outline-variant/20">
+<div class="flex justify-between items-center mb-4 px-4 pt-2">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="map">map</span>
+<h3 class="text-lg font-bold tracking-tight">Current Field View</h3>
+</div>
+<div class="flex gap-2">
+<span class="bg-surface-bright/80 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-semibold text-on-surface-variant border border-outline-variant/10">Satellite Mode</span>
+</div>
+</div>
+<div class="relative h-[500px] w-full rounded-[2rem] overflow-hidden group">
+<div class="absolute inset-0" id="summary-leaflet-map"></div>
+<div class="absolute inset-0 pointer-events-none bg-gradient-to-t from-on-surface/5 via-transparent to-transparent"></div>
+<!-- Overlay Label -->
+<div class="absolute top-6 left-6 bg-primary text-on-primary px-4 py-2 rounded-xl font-bold shadow-lg text-sm pointer-events-none" id="summary-map-label">
+                        Field Alpha-1
+                    </div>
+<!-- Prominent Map Button -->
+<div class="absolute bottom-10 right-10 flex items-center gap-4">
+<button class="flex items-center gap-3 bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300" data-route="/map">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+                            Go to Map
+                        </button>
+</div>
+<div class="absolute bottom-10 left-10">
+<div class="bg-surface-container-lowest/85 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-xs font-semibold text-on-surface-variant shadow-lg pointer-events-none">
+                            Use scroll, pinch, or +/- to zoom
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Auxiliary Stats Grid (Editorial layout) -->
+<section class="mt-12 grid grid-cols-12 gap-8">
+<div class="col-span-12 md:col-span-4 space-y-4">
+<h4 class="font-bold text-sm tracking-widest text-on-surface-variant uppercase opacity-60">Field Health</h4>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[92%]"></div>
+</div>
+<div class="flex justify-between items-end">
+<span class="text-4xl font-black tracking-tighter text-on-surface" id="summary-stat-1-value">92<span class="text-xl">%</span></span>
+<span class="text-primary font-bold text-sm" id="summary-stat-1-label">Optimal Range</span>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 space-y-4">
+<h4 class="font-bold text-sm tracking-widest text-on-surface-variant uppercase opacity-60">Total Yield Est.</h4>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[78%]"></div>
+</div>
+<div class="flex justify-between items-end">
+<span class="text-4xl font-black tracking-tighter text-on-surface" id="summary-stat-2-value">2.4k<span class="text-xl">bu</span></span>
+<span class="text-on-surface-variant font-bold text-sm" id="summary-stat-2-label">+12% vs LY</span>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface-container-high rounded-3xl p-6 flex items-center justify-between">
+<div>
+<h4 class="text-on-surface-variant font-bold text-xs uppercase tracking-widest mb-1">Last Update</h4>
+<p class="font-bold text-on-surface" id="summary-stat-3-value">14 mins ago</p>
+</div>
+<span class="material-symbols-outlined text-primary-container" data-icon="sync">sync</span>
+</div>
+</section>
+</main>
+<script src="/farmer-app-data.js"></script>
+<script crossorigin="" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/ui-actions.js"></script>
+</body></html>
